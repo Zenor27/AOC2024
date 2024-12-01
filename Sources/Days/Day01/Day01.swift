@@ -4,38 +4,39 @@ func getNumbers(input: [String]) -> ([Int], [Int]) {
 
   for line in input {
     let splitted = line.split(separator: " ")
-    if splitted.count != 2 {
-      print("Invalid input: \(line)")
-      continue
+    guard splitted.count == 2,
+      let left = Int(splitted[0]),
+      let right = Int(splitted[1])
+    else {
+      fatalError("Invalid input: \(line)")
     }
-    leftNumbers.append(Int(splitted[0])!)
-    rightNumbers.append(Int(splitted[1])!)
+
+    leftNumbers.append(left)
+    rightNumbers.append(right)
   }
 
   return (leftNumbers, rightNumbers)
 }
 
-func day01Part1() -> String {
-  var (leftNumbers, rightNumbers) = getNumbers(input: getInput(day: 1, part: Part.one))
+struct Day01: DayProtocol {
+  static func part1(input: [String]) -> String {
+    let (leftNumbers, rightNumbers) = getNumbers(input: getInput(day: 1, part: Part.one))
 
-  leftNumbers.sort()
-  rightNumbers.sort()
-  let result = zip(leftNumbers, rightNumbers)
-    .map { abs($0.0 - $0.1) }
-    .reduce(0, +)
+    let result = zip(leftNumbers.sorted(), rightNumbers.sorted())
+      .map { abs($0 - $1) }
+      .reduce(0, +)
 
-  return String(result)
-}
+    return String(result)
+  }
 
-func day01Part2() -> String {
-  let (leftNumbers, rightNumbers) = getNumbers(input: getInput(day: 1, part: Part.two))
+  static func part2(input: [String]) -> String {
+    let (leftNumbers, rightNumbers) = getNumbers(input: getInput(day: 1, part: Part.two))
 
-  let result = leftNumbers.map { leftNumber in
-    let matches = rightNumbers.count { rightNumber in
-      leftNumber == rightNumber
-    }
-    return leftNumber * matches
-  }.reduce(0, +)
+    let result = leftNumbers.map { leftNumber in
+      let matches = rightNumbers.count { leftNumber == $0 }
+      return leftNumber * matches
+    }.reduce(0, +)
 
-  return String(result)
+    return String(result)
+  }
 }
